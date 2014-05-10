@@ -1,5 +1,10 @@
+cmake_minimum_required(VERSION 2.8)
 project(cwebserver)
-
-add_executable(cwebserver main.cpp)
-
-install(TARGETS cwebserver RUNTIME DESTINATION bin)
+ADD_DEFINITIONS(-std=c++11)
+aux_source_directory(src SRC)
+aux_source_directory(src/tools TOOLS)
+aux_source_directory(src/HTTP HTTP)
+set(SRC_ALL ${SRC} ${TOOLS} ${HTTP})
+add_executable(cwebserver ${SRC_ALL} src/main.cpp )
+target_link_libraries(cwebserver boost_regex json-c pthread)
+#install(TARGETS cwebserver RUNTIME DESTINATION bin)
