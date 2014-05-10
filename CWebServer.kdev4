@@ -1,0 +1,4 @@
+[Project]
+Name=CWebServer
+Manager=KDevCMakeManager
+VersionControl=kdevgit
