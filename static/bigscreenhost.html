@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title></title>
+</head>
+<body onload="">
+<script type="text/javascript" src="script/json2.js"></script>
+<script type="text/javascript" src="script/jquery-2.0.3.min.js"></script>
+<script type="text/javascript" src="script/qrcode.js"></script>
+<script type="text/javascript">
+var ws;
+function start_connect(){
+    ws = new WebSocket("ws://"+location.hostname+":8082/ws");
+    ws.onopen = function() {
+     $("#state").html("connected");
+        if(screen_id)
+        {
+            var poststr=JSON.stringify({
+                function:"regist",
+                params:{
+                    id:screen_id
+                },
+                client_code:randomChar(10)
+            })
+            ws.send(poststr)
+        }
+    };
+    ws.onmessage = function (evt) {
+       $("#frame_content").html(evt.data)
+    }
+    ws.onclose=function(){
+        $("#state").html("connect losted")
+        setTimeout("start_connect()",1000)
+    }
+}
+function  randomChar(l)  {
+  var  x="0123456789qwertyuioplkjhgfdsazxcvbnm";
+  var  tmp="";
+  for(var  i=0;i<  l;i++)  {
+  tmp  +=  x.charAt(Math.ceil(Math.random()*100000000)%x.length);
+  }
+  return  tmp;
+}
+function sendWord()
+{
+    ws.send(JSON.stringify({
+        function:$("#function").val(),
+        params:{
+            data:$("#postmsg").val()
+        },
+        client_code:randomChar(10)
+    }))
+}
+var screen_id=0
+    function regist()
+    {
+        screen_id=$("#client_id").val()
+        var poststr=JSON.stringify({
+            function:"regist",
+            params:{
+                id:screen_id
+            },
+            client_code:randomChar(3)
+        })
+        ws.send(poststr)
+    }
+   start_connect();
+</script>
+当前状态<div id="state"></div><br />
+<div>
+    必须先提交屏幕id<input id="client_id" type="text"><input type="button" onclick="regist()" value="提交">
+</div>
+<div id="frame_content" src="" style="height: 100%;width: 100%" scrolling="no"></div>
+</body>
+</html>

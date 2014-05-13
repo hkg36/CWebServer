@@ -13,6 +13,8 @@
 #include <fcntl.h>
 #include <time.h>
 #include "tools/CBuffer.h"
+#include "HTTP/HttpServerResponse.h"
+
 void CListenSocket::setnonblock ( int fd )
 {
     int opts;
@@ -157,6 +159,13 @@ void CRuningSocket::TryWriteOut()
 }
 int CRuningSocket::datainput ( LPCBUFFER data )
 {
+  if(now_processor)
+  {
+    int res=now_processor->datainput(data);
+    if(now_processor->isClose())
+      now_processor=nullptr;
+    return res;
+  }
   size_t proced = 0;
   char* buf = ( char* ) data->Buffer();
   size_t datalen = data->datalen;
@@ -166,8 +175,30 @@ int CRuningSocket::datainput ( LPCBUFFER data )
       buf += proced;
       datalen -= proced;
       if ( procres == false ) {
-	httprequest.DebugPrint();
+	now_processor=getHttpProcessor(httprequest.Uri());
+	if(now_processor)
+	{
+	  now_processor->baseio=this;
+	  now_processor->ProcessRequest(httprequest);
+	  if(now_processor->isClose())
+	    now_processor=nullptr;
+	}
+	else{
+	  CHttpServerResponse response;
+	  response.Vision ( httprequest.Vision() );
+	  response.Message(404);
+	  std::string headstr=response.SaveHead();
+	  LPCBUFFER buffer=CBuffer::getBuffer(1024);
+	  memcpy(buffer->Buffer(),headstr.c_str(),headstr.size());
+	  buffer->datalen=headstr.size();
+	  buffer_write(buffer);
+	}
 	httprequest.Init();
       }
   }
+}
+void CRuningSocket::buffer_write(LPCBUFFER buffer)
+{
+  write_queue.push(buffer);
+  TryWriteOut();
 }

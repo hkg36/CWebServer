@@ -29,8 +29,9 @@ public:
         return closed;
     }
     virtual int on_event(int event)=0;
-    virtual int datainput ( LPCBUFFER data ) {};
-    virtual int fail ( int code ) {};
+    virtual int datainput ( LPCBUFFER data ) {}
+    virtual int fail ( int code ) {}
+    virtual void idel(){}
     virtual ~FileTask() {
     }
 };

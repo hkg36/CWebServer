@@ -45,7 +45,16 @@ int IOLoop::run_once(int wait_time)
   int epollres = epoll_wait ( epfd, events, 20, wait_time );
   if ( epollres == -1 )
   {
-    
+    auto pos=fdmap.begin();
+    while(pos!=fdmap.end())
+    {
+      pos->second->idel();
+      if(pos->second->isClose()){
+	pos=fdmap.erase(pos);
+      }else{
+	pos++;
+      }
+    }
   }
   else
   {

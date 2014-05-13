@@ -24,12 +24,12 @@ public:
     }
 
     void setContentLength ( unsigned long long v );
-    void setContentType ( std::string& maintype,std::string& subtype );
+    void setContentType (const std::string& maintype,const std::string& subtype );
     void setContentRange ( long long fullsize,long long start=-1,long long end=-1 );
-    void setContentEncoding ( std::string& v );
+    void setContentEncoding (const std::string& v );
     void setByteAcceptRanges();
-    void setAcceptRanges ( std::string& v );
-    void setTransferEncoding ( std::string& v );
+    void setAcceptRanges (const std::string& v );
+    void setTransferEncoding (const std::string& v );
 
     static std::string GetHttpCodeMessage ( unsigned int code );
 };

@@ -127,8 +127,8 @@ void CHttpServerResponse::setContentLength ( unsigned long long v )
     sprintf ( buf, "%llu", v );
     headmap["Content-Length"] = buf;
 }
-void CHttpServerResponse::setContentType ( std::string& maintype,
-        std::string& subtype )
+void CHttpServerResponse::setContentType (const std::string& maintype,
+      const  std::string& subtype )
 {
     char buf[128];
     sprintf ( buf, "%s/%s", maintype.c_str(), subtype.c_str() );
@@ -148,7 +148,7 @@ void CHttpServerResponse::setContentRange ( long long fullsize, long long start,
         assert ( false );
     }
 }
-void CHttpServerResponse::setContentEncoding ( std::string& v )
+void CHttpServerResponse::setContentEncoding (const std::string& v )
 {
     headmap["Content-Encoding"] = v;
 }
@@ -156,11 +156,11 @@ void CHttpServerResponse::setByteAcceptRanges()
 {
     headmap["Accept-Ranges"]="byte";
 }
-void CHttpServerResponse::setAcceptRanges ( std::string& v )
+void CHttpServerResponse::setAcceptRanges (const std::string& v )
 {
     headmap["Accept-Ranges"] = v;
 }
-void CHttpServerResponse::setTransferEncoding ( std::string& v )
+void CHttpServerResponse::setTransferEncoding (const std::string& v )
 {
     headmap["Transfer-Encoding"] = v;
 }

@@ -49,6 +49,21 @@ size_t ByteStream::Write ( void const* pv, size_t cb )
     nowpos += cb;
     return cb;
 }
+void ByteStream::Write(unsigned char byte)
+{
+  if ( nowsize - nowpos < 1 ) {
+        int newsize = nowpos + 1;
+        char* newbytes = ( char* ) realloc ( bytes, UPROUND ( newsize,uproundbase ) );
+        if ( newbytes != NULL ) {
+            bytes = newbytes;
+            nowsize = newsize;
+        } else {
+            
+        }
+    }
+    *(bytes + nowpos)=byte;
+    nowpos += 1;
+}
 bool ByteStream::SetSize ( size_t size )
 {
     if ( size == 0 ) {
