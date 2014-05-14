@@ -31,7 +31,7 @@ void CBuffer::PrintByte()
 {
   for(unsigned int i=0;i<datalen;i++)
   {
-    printf("%x ",buffer[i]);
+    printf("%02x ",buffer[i]);
   }
   printf("\n");
 }

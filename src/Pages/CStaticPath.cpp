@@ -25,6 +25,8 @@ void CStaticPath::ProcessRequest(CHttpServerRequest & request)
       CHttpServerResponse response;
       response.Vision ( request.Vision() );
       response.Message(200);
+      if(request.GetHead("Connection")=="keep-alive")
+	response.AddHead("Connection","keep-alive");
       response.setContentLength(filestat.st_size);
       response.setContentType ( "text", "html" );
       std::string headstr=response.SaveHead();
