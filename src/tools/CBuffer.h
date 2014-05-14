@@ -17,7 +17,7 @@ private:
     unsigned long long len;
     CBuffer();
 public:
-    unsigned int datalen;
+    unsigned long long datalen;
 private:
     unsigned char buffer[0];
 public:
@@ -29,6 +29,7 @@ public:
         return len;
     }
     static LPCBUFFER getBuffer ( unsigned int size );
+    void PrintByte();
 };
 
 

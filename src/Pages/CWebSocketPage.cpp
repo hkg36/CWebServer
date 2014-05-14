@@ -2,6 +2,7 @@
 #include "../HTTP/HttpServerResponse.h"
 #include "../tools/base64.h"
 #include <boost/uuid/sha1.hpp>
+#include "../HTTP/CWSSendFrame.h"
 
 const char fix_part[]="258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 void CWebSocketPage::ProcessRequest(CHttpServerRequest & request)
@@ -79,7 +80,15 @@ void CWebSocketPage::onFrame(CWSRecvFrame::Head* head,const unsigned char* data,
 0xB-F暂时无定义，为以后的控制帧保留
    */
   std::string databody((const char*)data,(size_t)size);
-  printf("%s\n",databody.c_str());
+  CWSSendFrame sendframe(databody.size());
+  LPCBUFFER buffer=CBuffer::getBuffer(10);
+  buffer->datalen = sendframe.WriteHeadPart(buffer->Buffer(),buffer->BufLen());
+  //buffer->PrintByte();
+  baseio->buffer_write(buffer);
+  buffer=CBuffer::getBuffer(databody.size());
+  memcpy(buffer->Buffer(),databody.c_str(),databody.size());
+  buffer->datalen=databody.size();
+  baseio->buffer_write(buffer);
 }
 HttpProcessor* CWebSocketPage::create()
 {

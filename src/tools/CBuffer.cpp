@@ -27,3 +27,11 @@ void CBuffer::operator delete ( void* arg )
 {
     free ( arg );
 }
+void CBuffer::PrintByte()
+{
+  for(unsigned int i=0;i<datalen;i++)
+  {
+    printf("%x ",buffer[i]);
+  }
+  printf("\n");
+}
