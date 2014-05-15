@@ -79,6 +79,20 @@ void CWebSocketPage::onFrame(CWSRecvFrame::Head* head,const unsigned char* data,
 0xA表示pong
 0xB-F暂时无定义，为以后的控制帧保留
    */
+  if(head->opcode==0x9)
+  {
+    CWSSendFrame sendframe(size,1,0xA);
+    LPCBUFFER buffer=CBuffer::getBuffer(10);
+    buffer->datalen = sendframe.WriteHeadPart(buffer->Buffer(),buffer->BufLen());
+    //buffer->PrintByte();
+    baseio->buffer_write(buffer);
+    buffer=CBuffer::getBuffer(size);
+    memcpy(buffer->Buffer(),data,size);
+    buffer->datalen=size;
+    baseio->buffer_write(buffer);
+    return;
+  }
+  
   std::string databody((const char*)data,(size_t)size);
   CWSSendFrame sendframe(databody.size());
   LPCBUFFER buffer=CBuffer::getBuffer(10);

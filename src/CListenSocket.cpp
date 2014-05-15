@@ -199,6 +199,9 @@ int CRuningSocket::datainput ( LPCBUFFER data )
 }
 void CRuningSocket::buffer_write(LPCBUFFER buffer)
 {
-  write_queue.push(buffer);
-  TryWriteOut();
+  if(buffer->datalen)
+  {
+    write_queue.push(buffer);
+    TryWriteOut();
+  }
 }
