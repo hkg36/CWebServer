@@ -13,6 +13,9 @@ public:
   int datainput(LPCBUFFER data);
   static HttpProcessor* create();
   virtual void onFrame(CWSRecvFrame::Head* head,const unsigned char* data,unsigned long long size);
+  virtual void onOpen();
+  virtual void onPong(const unsigned char* data,unsigned long long size);
+  void SendPing(const std::string data);
 };
 
 #endif // CWEBSOCKETPAGE_H

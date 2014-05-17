@@ -40,6 +40,10 @@ void CWebSocketPage::ProcessRequest(CHttpServerRequest & request)
   baseio->buffer_write(buffer);
   
   recvframe.Init();
+  onOpen();
+}
+void CWebSocketPage::onOpen()
+{
 }
 int CWebSocketPage::datainput(LPCBUFFER data)
 {
@@ -79,7 +83,9 @@ void CWebSocketPage::onFrame(CWSRecvFrame::Head* head,const unsigned char* data,
 0xA表示pong
 0xB-F暂时无定义，为以后的控制帧保留
    */
-  if(head->opcode==0x9)
+  switch(head->opcode)
+  {
+  case 0x9:
   {
     CWSSendFrame sendframe(size,1,0xA);
     LPCBUFFER buffer=CBuffer::getBuffer(10);
@@ -92,6 +98,10 @@ void CWebSocketPage::onFrame(CWSRecvFrame::Head* head,const unsigned char* data,
     baseio->buffer_write(buffer);
     return;
   }
+  case 0xA:
+    onPong(data,size);
+    return;
+  }
   
   std::string databody((const char*)data,(size_t)size);
   CWSSendFrame sendframe(databody.size());
@@ -102,6 +112,22 @@ void CWebSocketPage::onFrame(CWSRecvFrame::Head* head,const unsigned char* data,
   buffer=CBuffer::getBuffer(databody.size());
   memcpy(buffer->Buffer(),databody.c_str(),databody.size());
   buffer->datalen=databody.size();
+  baseio->buffer_write(buffer);
+}
+void CWebSocketPage::onPong(const unsigned char* data,unsigned long long size)
+{
+  printf("read pong\n");
+}
+void CWebSocketPage::SendPing(const std::string data)
+{
+  CWSSendFrame sendframe(data.size(),1,0x9);
+  LPCBUFFER buffer=CBuffer::getBuffer(10);
+  buffer->datalen = sendframe.WriteHeadPart(buffer->Buffer(),buffer->BufLen());
+  //buffer->PrintByte();
+  baseio->buffer_write(buffer);
+  buffer=CBuffer::getBuffer(data.size());
+  memcpy(buffer->Buffer(),data.c_str(),data.size());
+  buffer->datalen=data.size();
   baseio->buffer_write(buffer);
 }
 HttpProcessor* CWebSocketPage::create()
