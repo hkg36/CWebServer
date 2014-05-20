@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <netinet/in.h>
+#include <algorithm>
 
 #define ntohl64(p) \
 ((((uint64_t)((p)[7])) << 0) + (((uint64_t)((p)[6])) << 8) +\
@@ -21,10 +22,12 @@ void CWSRecvFrame::Init()
   framedone=false;
   bodystream->SetSize(0);
 }
-bool CWSRecvFrame::inputchar(unsigned char w)
+bool CWSRecvFrame::inputchars(unsigned char *w,int size,int *proced)
 {
-  bodystream->Write(w);
-  to_recv--;
+  unsigned long long can_proc=std::min((unsigned long long)size,to_recv);
+  bodystream->Write(w,can_proc);
+  *proced=can_proc;
+  to_recv-=can_proc;
   if(to_recv==0)
   {
     if(step==0)
@@ -106,8 +109,9 @@ bool CWSRecvFrame::inputbuffer(unsigned char* buf,int size,int *proced)
   bool res=false;
   while(proc<size)
   {
-    res=inputchar(*(buf+proc));
-    proc++;
+    int proced=0;
+    res=inputchars(buf+proc,size-proc,&proced);
+    proc+=proced;
     if(res==false)
       break;
   }

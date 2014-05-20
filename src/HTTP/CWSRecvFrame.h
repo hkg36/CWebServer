@@ -26,7 +26,7 @@ inline bool getFrameDone(){return framedone;}
 inline unsigned char* getBody(){return bodypoint;}
 inline unsigned long long getBodySize(){return bodysize;}
 void Init();
-bool inputchar(unsigned char w);
+bool inputchars(unsigned char *w,int size,int *proced);
 bool inputbuffer(unsigned char* buf,int size,int *proced);
 };
 
