@@ -3,6 +3,8 @@
 #include "stdio.h"
 #include <sys/stat.h> 
 #include <unistd.h>
+#include <string>
+#include <time.h>
 
 HttpProcessor* CStaticPath::create()
 {
@@ -19,6 +21,33 @@ void CStaticPath::ProcessRequest(CHttpServerRequest & request)
   struct   stat filestat;
   if(stat(fpath.c_str(),&filestat)==0)
   {
+    if(request.HasHead("If-Modified-Since"))
+    {
+      std::string since_time=request.GetHead("If-Modified-Since");
+      struct tm tm;
+      strptime(since_time.c_str(), "%a, %d %b %Y %H:%M:%S %Z", &tm);
+      time_t s_time=mktime(&tm);
+      if(filestat.st_mtime<=s_time)
+      {
+	CHttpServerResponse response;
+	response.Vision ( request.Vision() );
+	response.Message(304);
+	char buf[64];
+	time_t now = time(0);
+	strftime(buf, sizeof(buf), "%a, %d %b %Y %H:%M:%S %Z", gmtime(&now));
+	response.AddHead("Date",buf);
+	now+=60*60*200;
+	strftime(buf, sizeof(buf), "%a, %d %b %Y %H:%M:%S %Z", gmtime(&now));
+	response.AddHead("Expires",buf);
+	std::string headstr=response.SaveHead();
+	LPCBUFFER buffer=CBuffer::getBuffer(1024);
+	memcpy(buffer->Buffer(),headstr.c_str(),headstr.size());
+	buffer->datalen=headstr.size();
+	baseio->buffer_write(buffer);
+	setClose();
+	return;
+      }
+    }
     FILE *fp=fopen(fpath.c_str(),"r");
     if(fp)
     {
@@ -29,6 +58,17 @@ void CStaticPath::ProcessRequest(CHttpServerRequest & request)
 	response.AddHead("Connection","keep-alive");
       response.setContentLength(filestat.st_size);
       response.setContentType ( "text", "html" );
+      
+      char buf[64];
+      time_t now = time(0);
+      strftime(buf, sizeof(buf), "%a, %d %b %Y %H:%M:%S %Z", gmtime(&now));
+      response.AddHead("Date",buf);
+      now+=60*60*200;
+      strftime(buf, sizeof(buf), "%a, %d %b %Y %H:%M:%S %Z", gmtime(&now));
+      response.AddHead("Expires",buf);
+      strftime(buf, sizeof(buf), "%a, %d %b %Y %H:%M:%S %Z", gmtime(&filestat.st_mtime));
+      response.AddHead("Last-Modified",buf);
+      
       std::string headstr=response.SaveHead();
       LPCBUFFER buffer=CBuffer::getBuffer(1024);
       memcpy(buffer->Buffer(),headstr.c_str(),headstr.size());

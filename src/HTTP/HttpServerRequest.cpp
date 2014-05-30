@@ -55,6 +55,11 @@ std::string CHttpServerRequest::GetHead ( const std::string& key ) const
     }
     return std::string();
 }
+bool CHttpServerRequest::HasHead( const std::string& key ) const
+{
+  HeadMap::const_iterator i = headmap.find ( key );
+  return i != headmap.end();
+}
 bool CHttpServerRequest::getContentLength ( int& value ) const
 {
     std::string res = GetHead ( "Content-Length" );

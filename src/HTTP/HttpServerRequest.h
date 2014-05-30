@@ -31,6 +31,7 @@ private:
     int torecvbody;
 public:
     std::string GetHead ( const std::string& key ) const;
+    bool HasHead( const std::string& key ) const;
     bool getContentLength ( int& value ) const;
     bool Resault() const {
         return resault;

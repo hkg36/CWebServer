@@ -63,7 +63,6 @@ int CWebSocketPage::datainput(unsigned char *data,size_t datalen,size_t *proced)
 	recvframe.Init();
       }
       else{
-	printf("websock close\n");
 	setClose();
 	return 1;
       }
