@@ -7,7 +7,6 @@ class CIndexPage:public HttpProcessor
 public:
 CIndexPage();
 void ProcessRequest(CHttpServerRequest & request);
-int datainput(LPCBUFFER data){};
 static HttpProcessor* create();
 };
 

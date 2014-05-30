@@ -7,7 +7,6 @@ class CStaticPath:public HttpProcessor
 public:
 CStaticPath();
 void ProcessRequest(CHttpServerRequest & request);
-int datainput(LPCBUFFER data){};
 static HttpProcessor* create();
 };
 

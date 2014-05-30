@@ -22,7 +22,7 @@ void CWSRecvFrame::Init()
   framedone=false;
   bodystream->SetSize(0);
 }
-bool CWSRecvFrame::inputchars(unsigned char *w,int size,int *proced)
+bool CWSRecvFrame::inputchars(unsigned char *w,size_t size,size_t *proced)
 {
   unsigned long long can_proc=std::min((unsigned long long)size,to_recv);
   bodystream->Write(w,can_proc);
@@ -103,13 +103,13 @@ bool CWSRecvFrame::inputchars(unsigned char *w,int size,int *proced)
   }
   return true;
 }
-bool CWSRecvFrame::inputbuffer(unsigned char* buf,int size,int *proced)
+bool CWSRecvFrame::inputbuffer(unsigned char* buf,size_t size,size_t *proced)
 {
-  int proc=0;
+  size_t proc=0;
   bool res=false;
   while(proc<size)
   {
-    int proced=0;
+    size_t proced=0;
     res=inputchars(buf+proc,size-proc,&proced);
     proc+=proced;
     if(res==false)

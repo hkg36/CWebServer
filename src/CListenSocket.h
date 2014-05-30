@@ -30,7 +30,7 @@ public:
   BaseSocketIO *baseio;
   HttpProcessor():closed(false){}
   virtual void ProcessRequest(CHttpServerRequest & request)=0; 
-  virtual int datainput(LPCBUFFER data)=0;
+  virtual int datainput(unsigned char *data,size_t datalen,size_t *proced){};
   inline void setClose()
   {closed=true;
   }

@@ -10,7 +10,7 @@ protected:
   CWSRecvFrame recvframe;
 public:
   void ProcessRequest(CHttpServerRequest & request);
-  int datainput(LPCBUFFER data);
+  int datainput(unsigned char *data,size_t datalen,size_t *proced);
   static HttpProcessor* create();
   virtual void onFrame(CWSRecvFrame::Head* head,const unsigned char* data,unsigned long long size);
   virtual void onOpen();

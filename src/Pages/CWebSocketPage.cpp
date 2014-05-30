@@ -45,13 +45,16 @@ void CWebSocketPage::ProcessRequest(CHttpServerRequest & request)
 void CWebSocketPage::onOpen()
 {
 }
-int CWebSocketPage::datainput(LPCBUFFER data)
+int CWebSocketPage::datainput(unsigned char *data,size_t datalen,size_t *proced)
 {
-  int proced=0;
+  *proced=0;
   while(true)
   {
-    int data_run;
-    bool res=recvframe.inputbuffer(data->Buffer()+proced,data->datalen-proced,&data_run);
+    size_t data_run;
+    bool res=recvframe.inputbuffer(data,datalen,&data_run);
+    *proced+=data_run;
+    data+=data_run;
+    datalen-=data_run;
     if(res==false)
     {
       if(recvframe.getFrameDone())
@@ -60,12 +63,12 @@ int CWebSocketPage::datainput(LPCBUFFER data)
 	recvframe.Init();
       }
       else{
+	printf("websock close\n");
 	setClose();
 	return 1;
       }
     }
-    proced+=data_run;
-    if(proced==data->datalen)
+    if(datalen==0)
       break;
   }
   return 0;

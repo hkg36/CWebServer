@@ -61,7 +61,7 @@ var screen_id=0
             params:{
                 id:screen_id
             },
-            client_code:randomChar(6)
+            client_code:randomChar($("#codelen").val())
         })
         ws.send(poststr)
     }
@@ -70,7 +70,8 @@ var screen_id=0
 当前状态<div id="state"></div><br />
 <div>
     必须先提交屏幕id<input id="client_id" type="text"><input type="button" onclick="regist()" value="提交">
+    <input id="codelen" type="text">
 </div>
-<div id="frame_content" src="" style="height: 100%;width: 100%" scrolling="no"></div>
+<div id="frame_content" src="" style="word-break:break-all;width: 100%" scrolling="no"></div>
 </body>
 </html>

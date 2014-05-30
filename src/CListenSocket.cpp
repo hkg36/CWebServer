@@ -159,18 +159,20 @@ void CRuningSocket::TryWriteOut()
 }
 int CRuningSocket::datainput ( LPCBUFFER data )
 {
-  if(now_processor)
-  {
-    int res=now_processor->datainput(data);
-    if(now_processor->isClose())
-      now_processor=nullptr;
-    return res;
-  }
   size_t proced = 0;
   char* buf = ( char* ) data->Buffer();
   size_t datalen = data->datalen;
   bool procres = true;
   while ( datalen > 0 ) {
+    if(now_processor)
+    {
+      int res=now_processor->datainput((unsigned char*)buf,datalen,&proced);
+      buf+=proced;
+      datalen-=proced;
+      if(now_processor->isClose())
+	now_processor=nullptr;
+      continue;
+    }
       procres = httprequest.InputBuffer ( buf, datalen, proced );
       buf += proced;
       datalen -= proced;

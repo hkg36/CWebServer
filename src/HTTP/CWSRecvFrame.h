@@ -26,8 +26,8 @@ inline bool getFrameDone(){return framedone;}
 inline unsigned char* getBody(){return bodypoint;}
 inline unsigned long long getBodySize(){return bodysize;}
 void Init();
-bool inputchars(unsigned char *w,int size,int *proced);
-bool inputbuffer(unsigned char* buf,int size,int *proced);
+bool inputchars(unsigned char *w,size_t size,size_t *proced);
+bool inputbuffer(unsigned char* buf,size_t size,size_t *proced);
 };
 
 #endif // CWSRECVFRAME_H
