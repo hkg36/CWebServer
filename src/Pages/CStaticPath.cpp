@@ -26,7 +26,7 @@ void CStaticPath::ProcessRequest(CHttpServerRequest & request)
       std::string since_time=request.GetHead("If-Modified-Since");
       struct tm tm;
       strptime(since_time.c_str(), "%a, %d %b %Y %H:%M:%S %Z", &tm);
-      time_t s_time=mktime(&tm);
+      time_t s_time=timegm(&tm);
       if(filestat.st_mtime<=s_time)
       {
 	CHttpServerResponse response;
@@ -39,6 +39,8 @@ void CStaticPath::ProcessRequest(CHttpServerRequest & request)
 	now+=60*60*200;
 	strftime(buf, sizeof(buf), "%a, %d %b %Y %H:%M:%S %Z", gmtime(&now));
 	response.AddHead("Expires",buf);
+	strftime(buf, sizeof(buf), "%a, %d %b %Y %H:%M:%S %Z", gmtime(&filestat.st_mtime));
+      response.AddHead("Modified-time",buf);
 	std::string headstr=response.SaveHead();
 	LPCBUFFER buffer=CBuffer::getBuffer(1024);
 	memcpy(buffer->Buffer(),headstr.c_str(),headstr.size());
