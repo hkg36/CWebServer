@@ -11,15 +11,15 @@ class CListenSocket:public FileTask
 {
 private:
 public:
-  CListenSocket(const char* host,unsigned short port);
+  CListenSocket ( const char* host,unsigned short port );
   ~CListenSocket();
-  int on_event(int event);
+  int on_event ( int event );
   static void setnonblock ( int fd );
 };
 
 struct BaseSocketIO
 {
-  virtual void buffer_write(LPCBUFFER buffer)=0;
+  virtual void buffer_write ( LPCBUFFER buffer ) =0;
 };
 class HttpProcessor:public IPtrBase<HttpProcessor>
 {
@@ -28,11 +28,12 @@ private:
   bool closed;
 public:
   BaseSocketIO *baseio;
-  HttpProcessor():closed(false){}
-  virtual void ProcessRequest(CHttpServerRequest & request)=0; 
-  virtual int datainput(unsigned char *data,size_t datalen,size_t *proced){};
+  HttpProcessor() :closed ( false ) {}
+  virtual void ProcessRequest ( CHttpServerRequest & request ) =0;
+  virtual int datainput ( unsigned char *data,size_t datalen,size_t *proced ) {};
   inline void setClose()
-  {closed=true;
+  {
+    closed=true;
   }
   inline bool isClose()
   {
@@ -49,14 +50,14 @@ protected:
   CHttpServerRequest httprequest;
   CIPtr<HttpProcessor> now_processor;
 public:
-  CRuningSocket(int fd,struct sockaddr* addr);
+  CRuningSocket ( int fd,struct sockaddr* addr );
   ~CRuningSocket();
-  int on_event(int event);
+  int on_event ( int event );
   void TryWriteOut();
   int datainput ( LPCBUFFER data );
-  void buffer_write(LPCBUFFER buffer);
+  void buffer_write ( LPCBUFFER buffer );
 };
 
-HttpProcessor* getHttpProcessor(const std::string &path);
+HttpProcessor* getHttpProcessor ( const std::string &path );
 
 #endif // CLISTENSOCKET_H

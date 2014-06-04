@@ -22,7 +22,7 @@ struct URIPath{
   HttpProcessor* (*create_class)();
 };
 std::vector<URIPath> urlpaths;
-HttpProcessor* getHttpProcessor(const std::string &path)
+HttpProcessor* getHttpProcessor ( const std::string &path )
 {
   if(urlpaths.empty())
   {

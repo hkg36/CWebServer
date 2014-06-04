@@ -5,7 +5,8 @@
 class CWSRecvFrame
 {
 public:
-  struct Head{
+  struct Head
+  {
     unsigned char fin;
     unsigned char rsv1;
     unsigned char rsv2;
@@ -13,7 +14,7 @@ public:
     unsigned char opcode;
     unsigned char mask;
     unsigned char payloadlen;
-  }framehead;
+  } framehead;
   unsigned long long bodysize;
   ByteStream::LPByteStream bodystream;
   int step;
@@ -21,13 +22,22 @@ public:
   unsigned char* bodypoint;
   bool framedone;
 public:
-CWSRecvFrame();
-inline bool getFrameDone(){return framedone;}
-inline unsigned char* getBody(){return bodypoint;}
-inline unsigned long long getBodySize(){return bodysize;}
-void Init();
-bool inputchars(unsigned char *w,size_t size,size_t *proced);
-bool inputbuffer(unsigned char* buf,size_t size,size_t *proced);
+  CWSRecvFrame();
+  inline bool getFrameDone()
+  {
+    return framedone;
+  }
+  inline unsigned char* getBody()
+  {
+    return bodypoint;
+  }
+  inline unsigned long long getBodySize()
+  {
+    return bodysize;
+  }
+  void Init();
+  bool inputchars ( unsigned char *w,size_t size,size_t *proced );
+  bool inputbuffer ( unsigned char* buf,size_t size,size_t *proced );
 };
 
 #endif // CWSRECVFRAME_H

@@ -12,25 +12,27 @@
 class ByteStream: public IPtrBase<ByteStream>
 {
 protected:
-    char* bytes;
-    size_t nowsize;
-    size_t nowpos;
+  char* bytes;
+  size_t nowsize;
+  size_t nowpos;
 protected:
-    ByteStream();
+  ByteStream();
 public:
-    ~ByteStream();
-    size_t Read ( void* pv, size_t cb );
-    size_t Write ( void const* pv, size_t cb );
-    void Write(unsigned char byte);
-    bool SetSize ( size_t sz );
-    inline char* GetBuffer() {
-        return bytes;
-    }
-    inline size_t GetBufferSize() {
-        return nowsize;
-    }
-    typedef CIPtr<ByteStream> LPByteStream;
-    static LPByteStream CreateInstanse();
+  ~ByteStream();
+  size_t Read ( void* pv, size_t cb );
+  size_t Write ( void const* pv, size_t cb );
+  void Write ( unsigned char byte );
+  bool SetSize ( size_t sz );
+  inline char* GetBuffer()
+  {
+    return bytes;
+  }
+  inline size_t GetBufferSize()
+  {
+    return nowsize;
+  }
+  typedef CIPtr<ByteStream> LPByteStream;
+  static LPByteStream CreateInstanse();
 };
 
 #endif /* BYTESTREAM_H_ */
