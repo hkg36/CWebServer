@@ -74,7 +74,6 @@ int IOLoop::run_once ( int wait_time )
                   ev.data.fd = pos->second->getFD();
                   ev.events = 0;
                   epoll_ctl ( epfd, EPOLL_CTL_DEL, pos->second->getFD(), &ev );
-                  printf ( "%d closed\n",pos->second->getFD() );
                   fdmap.erase ( pos );
                 }
             }
