@@ -27,6 +27,7 @@ SSL_CTX *GetSSLContext()
     {
       exit(5);
     }
+    SSL_CTX_set_timeout(ssl_ctx,5);
     
     ssl_locks = (pthread_mutex_t*)calloc(CRYPTO_num_locks(), sizeof(pthread_mutex_t));
     pthread_mutexattr_t mutexattr;
@@ -81,6 +82,20 @@ int SSLSocket::Connect(const char* address,int port,bool usessl)
   server.sin_family=AF_INET;
   server.sin_port=htons(port);
   sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+  
+  
+  struct timeval timeo;
+  socklen_t len = sizeof(timeo);
+  timeo.tv_sec = 5;
+  timeo.tv_usec=0;
+  if (setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, &timeo, len) == -1)
+  {
+    printf("set send time out fail\n");
+  }
+  if (setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &timeo, len) == -1)
+  {
+    printf("set recv time out fail\n");
+  }
   if(connect(sock,(struct sockaddr *) &server,
                         sizeof(server))<0)
   {
@@ -131,4 +146,18 @@ int SSLSocket::Recv(char* buffer,int size)
   }
   else
     return recv(sock,buffer,size,0);
+}
+bool SSLSocket::IsRecvTimeOut(int errret)
+{
+  if(ssl_session)
+    return SSL_get_error(ssl_session,errret)==SSL_ERROR_WANT_READ;
+  else
+    return errno==EAGAIN;
+}
+bool SSLSocket::IsSendTimeOut(int errret)
+{
+  if(ssl_session)
+    return SSL_get_error(ssl_session,errret)==SSL_ERROR_WANT_WRITE;
+  else
+    return errno==EAGAIN;
 }

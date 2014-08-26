@@ -18,6 +18,8 @@ public:
   void Close();
   int Send(const char* buffer,int size);
   int Recv(char* buffer,int size);
+  bool IsRecvTimeOut(int errret);
+  bool IsSendTimeOut(int errret);
 };
 
 #endif // SSLSOCKET_H

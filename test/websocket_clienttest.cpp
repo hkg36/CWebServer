@@ -78,8 +78,16 @@ int main ( int argc, char **argv )
     while(true)
     {
       int recvd=sock.Recv(buffer,sizeof(buffer));
+      printf("recv %d\n",recvd);
       if(recvd==0)
 	break;
+      if(recvd==-1)
+      {
+	if(sock.IsRecvTimeOut(recvd))
+	  continue;
+	else
+	  break;
+      }
       while(recvd)
       {
 	unsigned char* bufferpoint=(unsigned char*)buffer;
