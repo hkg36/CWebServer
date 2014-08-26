@@ -1,5 +1,19 @@
 #include "SSLSocket.h"
 #include <unistd.h>
+#include <pthread.h>
+static pthread_mutex_t* ssl_locks=nullptr;
+void ssl_threadid_function_callback(CRYPTO_THREADID* id) {
+    CRYPTO_THREADID_set_numeric(id, (unsigned long)pthread_self());
+}
+void ssl_lock_callback(int mode, int type,const char *file, int line) {
+    if (mode & CRYPTO_LOCK) {
+        pthread_mutex_lock(&(ssl_locks[type]));
+	//printf("ssl locked: [type] %d, [file] %s, [line] %d\n", type, file, line);
+    } else {
+        pthread_mutex_unlock(&(ssl_locks[type]));
+	//printf("ssl unlock: [type] %d, [file] %s, [line] %d\n", type, file, line);
+    }
+}
 SSL_CTX *GetSSLContext()
 {
   static SSL_CTX *ssl_ctx=nullptr;
@@ -13,6 +27,18 @@ SSL_CTX *GetSSLContext()
     {
       exit(5);
     }
+    
+    ssl_locks = (pthread_mutex_t*)calloc(CRYPTO_num_locks(), sizeof(pthread_mutex_t));
+    pthread_mutexattr_t mutexattr;
+    pthread_mutexattr_init ( &mutexattr );
+    pthread_mutexattr_setpshared ( &mutexattr, PTHREAD_PROCESS_PRIVATE );
+    pthread_mutexattr_settype ( &mutexattr, PTHREAD_MUTEX_RECURSIVE );
+    for (int i=0; i< CRYPTO_num_locks(); i++) {
+      pthread_mutex_init(&(ssl_locks[i]),&mutexattr);
+    }
+    pthread_mutexattr_destroy ( &mutexattr );
+    CRYPTO_THREADID_set_callback(ssl_threadid_function_callback);
+    CRYPTO_set_locking_callback(ssl_lock_callback);
   }
   return ssl_ctx;
 }
